@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  mongodb:
+    image: mongo:4.4.1
+    networks:
+      - webnet
+    volumes:
+      - data-volume:/var/lib/db
+    environment: 
+      MONGO_INITDB_ROOT_USERNAME: hampus
+      MONGO_INITDB_ROOT_PASSWORD: e0qqxBDm3VR0BcIU
+  app:
+    image: holsen/globetrotter-server:1.0.0
+    build: .
+    ports:
+      - "3008:3008"
+    volumes:
+      - .:/code
+      - logvolume01:/var/log
+    links:
+      - redis
+      - mongodb
+    networks: 
+      - webnet
+    environment: 
+      MONGO_URI: mongodb
+      REDIS_URI: redis
+    command: ["./wait-for-it.sh", "mongodb:27017", "redis:6379", "--", "yarn", "dev"]
+  redis:
+    image: redis:6.0.8-alpine
+    networks:
+      - webnet
+    volumes:
+      - data-volume:/var/lib/cache
+networks: 
+  webnet:
+volumes:
+  logvolume01: {}
+  data-volume:

@@ -1,4 +1,6 @@
 {
   "extends": ["wesbos"],
-  "rules": {}
+  "rules": {
+    "max-classes-per-file": "off"
+  }
 }
