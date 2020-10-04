@@ -1,28 +1,13 @@
 require('dotenv').config();
 
-const server = require('express')();
-const loadConfiguration = require('./config');
-const { AuthenticationError } = require('./errors');
+const app = require('express')();
+const { PORT } = require('./config');
+const loadMiddlewares = require('./middlewares/loadMiddlewares');
+const errorHandler = require('./middlewares/errorHandler');
 
-const { PORT } = loadConfiguration();
+loadMiddlewares(app);
+app.use(errorHandler);
 
-server.use('*', async (_req, _res, next) => {
-  try {
-    throw AuthenticationError();
-  } catch (err) {
-    next(err);
-  }
-});
-
-server.use((error, _req, res, _next) => {
-  res.status(error.code).send({
-    type: error.name,
-    message: error.message,
-    status: error.status,
-    code: error.code,
-  });
-});
-
-server.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`API server running on port ${PORT}`);
 });
