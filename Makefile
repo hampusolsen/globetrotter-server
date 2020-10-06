@@ -15,3 +15,9 @@ ls:
 
 stats:
 	docker container stats
+
+test:
+	yarn jest
+
+test-watch:
+	yarn jest --watch

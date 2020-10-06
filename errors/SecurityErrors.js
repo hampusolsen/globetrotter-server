@@ -8,7 +8,7 @@ class AuthenticationError extends BaseError {
 }
 
 class AuthorizationError extends BaseError {
-  constructor(message = 'Invalid credentials.', code = 403) {
+  constructor(message = 'Unauthorized access.', code = 403) {
     super(message, code);
     this.name = this.constructor.name;
   }

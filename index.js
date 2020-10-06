@@ -1,13 +1,11 @@
 require('dotenv').config();
 
-const app = require('express')();
 const { PORT } = require('./config');
-const loadMiddlewares = require('./middlewares/loadMiddlewares');
-const errorHandler = require('./middlewares/errorHandler');
+const app = require('./app');
+const establishDatabaseConnection = require('./db');
 
-loadMiddlewares(app);
-app.use(errorHandler);
+(async () => {
+  await establishDatabaseConnection();
 
-app.listen(PORT, () => {
-  console.log(`API server running on port ${PORT}`);
-});
+  app.listen(PORT, () => console.log(`API server running on port ${PORT}.`));
+})();

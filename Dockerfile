@@ -1,11 +1,13 @@
 FROM node:14.11.0-alpine3.12
 
-WORKDIR /app
+WORKDIR /usr/src/app
 
 COPY package.json .
 COPY yarn.lock .
 
-RUN yarn -i
 RUN apk add --no-cache bash
+RUN yarn -i
+
+EXPOSE 3008
 
 COPY . .

@@ -1,3 +1,5 @@
+const { NODE_ENV } = process.env;
+
 const serverConfiguration = {
   PORT: process.env.PORT,
 };
@@ -16,10 +18,12 @@ const databaseConfiguration = {
   MONGO_URI: process.env.MONGO_URI,
   MONGO_USERNAME: process.env.MONGO_USERNAME,
   MONGO_PASSWORD: process.env.MONGO_PASSWORD,
+  MONGO_DATABASE: NODE_ENV === 'test' ? 'testdb' : process.env.MONGO_DATABASE,
   REDIS_URI: process.env.REDIS_URI,
 };
 
 module.exports = {
+  NODE_ENV,
   ...serverConfiguration,
   ...authConfiguration,
   ...databaseConfiguration,

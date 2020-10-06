@@ -1,7 +1,10 @@
 version: "3.8"
 services:
-  mongodb:
+  mongo:
+    container_name: mongo
     image: mongo:4.4.1
+    ports:
+      - "27017:27017"
     networks:
       - webnet
     volumes:
@@ -10,24 +13,28 @@ services:
       MONGO_INITDB_ROOT_USERNAME: hampus
       MONGO_INITDB_ROOT_PASSWORD: e0qqxBDm3VR0BcIU
   app:
+    container_name: http
+    restart: always
     image: holsen/globetrotter-server:1.0.0
     build: .
     ports:
       - "3008:3008"
     volumes:
-      - .:/app
-      - logvolume01:/var/log
+      - .:/usr/src/app
     links:
       - redis
-      - mongodb
+      - mongo
     networks: 
       - webnet
     environment: 
-      MONGO_URI: mongodb
+      MONGO_URI: mongo
       REDIS_URI: redis
-    command: ./wait-for-it.sh mongodb:27017 redis:6379 -- yarn dev
+    command: ./wait-for-it.sh mongo:27017 redis:6379 -- yarn dev
   redis:
+    container_name: redis
     image: redis:6.0.8-alpine
+    ports:
+      - "6379:6379"
     networks:
       - webnet
     volumes:
@@ -35,5 +42,4 @@ services:
 networks: 
   webnet:
 volumes:
-  logvolume01: {}
   data-volume:

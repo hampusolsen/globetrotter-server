@@ -1,5 +1,12 @@
 const BaseError = require('./BaseError');
 
+class ConnectionError extends BaseError {
+  constructor(message = 'Unable to connect with the database.', code = 503) {
+    super(message, code);
+    this.name = this.constructor.name;
+  }
+}
+
 class EntityNotFoundError extends BaseError {
   constructor(message = 'Entity not found in database.', code = 422) {
     super(message, code);
@@ -22,6 +29,9 @@ class UniqueFlagViolationError extends BaseError {
 }
 
 module.exports = {
+  ConnectionError() {
+    return new ConnectionError();
+  },
   EntityNotFoundError() {
     return new EntityNotFoundError();
   },
