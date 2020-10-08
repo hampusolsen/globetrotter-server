@@ -10,4 +10,6 @@ RUN yarn -i
 
 EXPOSE 3008
 
+CMD [".docker/app/wait-for-it.sh", "mongo:27017", "redis:6379", "--", "yarn", "dev"]
+
 COPY . .

@@ -1,0 +1,23 @@
+# access from internet not allowed
+bind 127.0.0.1
+protected-mode yes
+appendonly yes
+masterauth --
+masteruser --
+
+port 6379
+timeout 0
+tcp-backlog 511
+tcp-keepalive 300
+
+# moderate logging to stdout
+loglevel notice
+logfile ""
+
+# always show redis ASCII logo
+always-show-logo yes
+
+# save options seconds keys
+save 900 1
+save 300 10
+save 60 10000

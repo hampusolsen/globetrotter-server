@@ -3,3 +3,5 @@
 .git
 /coverage/
 /__tests__/
+*.conf
+*-error.log

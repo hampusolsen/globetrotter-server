@@ -1,5 +1,5 @@
 const app = require('express')();
-const loadMiddlewares = require('./middlewares/loadMiddlewares');
+const loadMiddlewares = require('./middlewares');
 const errorHandler = require('./middlewares/errorHandler');
 
 loadMiddlewares(app);

@@ -1,5 +1,12 @@
 const BaseError = require('./BaseError');
 
+class CachingError extends BaseError {
+  constructor(message = 'Error caching data.', code = 500) {
+    super(message, code);
+    this.name = this.constructor.name;
+  }
+}
+
 class ConnectionError extends BaseError {
   constructor(message = 'Unable to connect with the database.', code = 503) {
     super(message, code);
@@ -29,6 +36,9 @@ class UniqueFlagViolationError extends BaseError {
 }
 
 module.exports = {
+  CachingError(message) {
+    return new CachingError(message);
+  },
   ConnectionError() {
     return new ConnectionError();
   },

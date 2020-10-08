@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const {
-  MONGO_URI,
+  MONGO_HOST,
   MONGO_PASSWORD,
   MONGO_USERNAME,
   MONGO_DATABASE,
-} = require('./config');
-const DatabaseErrors = require('./errors/DatabaseErrors');
+} = require('.');
+const DatabaseErrors = require('../errors/DatabaseErrors');
 
 module.exports = async function establishDatabaseConnection() {
   try {
-    await mongoose.connect(`mongodb://${MONGO_URI}:27017`, {
+    await mongoose.connect(`mongodb://${MONGO_HOST}:27017`, {
       useNewUrlParser: true,
       useCreateIndex: true,
       useUnifiedTopology: true,

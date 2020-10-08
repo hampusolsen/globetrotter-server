@@ -7,6 +7,9 @@ down:
 build:
 	docker-compose build
 
+build-up:
+	docker-compose up --build -d
+
 nocache:
 	docker-compose build --no-cache
 
