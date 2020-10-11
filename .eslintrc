@@ -1,6 +1,11 @@
 {
   "extends": ["wesbos"],
   "rules": {
-    "max-classes-per-file": "off"
+    // disabled to pool many errors in the same file
+    "max-classes-per-file": "off",
+
+    // disabled to dynamically load files in routes directory
+    "import/no-dynamic-require": "off",
+    "global-require": "off"
   }
 }

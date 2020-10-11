@@ -2,8 +2,8 @@
 bind 127.0.0.1
 protected-mode yes
 appendonly yes
-masterauth --
-masteruser --
+masterauth password
+masteruser username
 
 port 6379
 timeout 0

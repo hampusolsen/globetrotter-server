@@ -7,6 +7,8 @@ COPY yarn.lock .
 
 RUN apk add --no-cache bash
 RUN yarn -i
+RUN yarn remove bcrypt
+RUN yarn add bcrypt
 
 EXPOSE 3008
 

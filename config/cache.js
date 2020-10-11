@@ -1,14 +1,15 @@
-const redis = require('redis');
-const { REDIS_PORT, REDIS_HOST } = require('.');
-const { CachingError } = require('../errors/DatabaseErrors');
+const Redis = require('ioredis');
 
-const client = redis.createClient({
+const { REDIS_PORT, REDIS_HOST } = process.env;
+const { CachingError } = require('../errors');
+
+const client = new Redis({
   host: REDIS_HOST,
   port: REDIS_PORT,
 });
 
-client.get('FOO', (err, reply) => {
-  console.log(reply);
+client.on('ready', () => {
+  console.log('Connected to the cache database.');
 });
 
 client.on('error', (error) => {

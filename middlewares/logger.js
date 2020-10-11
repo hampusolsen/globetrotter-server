@@ -1,13 +1,18 @@
-module.exports = function logger(req, res, next) {
-  const startTime = Date.now();
+module.exports = function loggerFactory(level) {
+  return function logger(req, res, next) {
+    const startTime = Date.now();
 
-  res.on('finish', () => {
-    const endTime = Date.now();
+    res.on('finish', () => {
+      const time = Date.now() - startTime;
 
-    console.log(
-      `${req.method} ${req.path} ${res.statusCode} ${endTime - startTime}ms`
-    );
-  });
+      switch (level) {
+        case 'verbose':
+          break;
+        default:
+          console.log(`${req.method} ${req.path} ${res.statusCode} ${time}ms`);
+      }
+    });
 
-  next();
+    next();
+  };
 };

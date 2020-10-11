@@ -22,14 +22,14 @@ class EntityNotFoundError extends BaseError {
 }
 
 class EntityValidationError extends BaseError {
-  constructor(message = 'Entity failed validation.', code = 422) {
+  constructor(message, code = 422) {
     super(message, code);
     this.name = this.constructor.name;
   }
 }
 
 class UniqueFlagViolationError extends BaseError {
-  constructor(message = 'Entity property violates unique flag.', code = 409) {
+  constructor(message, code = 409) {
     super(message, code);
     this.name = this.constructor.name;
   }
@@ -45,12 +45,18 @@ module.exports = {
   EntityNotFoundError() {
     return new EntityNotFoundError();
   },
-  EntityValidationError() {
-    return new EntityValidationError();
+  EntityValidationError(property) {
+    const message = property
+      ? `Property '${property}' failed validation.`
+      : 'Entity failed validation.';
+
+    return new EntityValidationError(message);
   },
   UniqueFlagViolationError(property) {
-    return new UniqueFlagViolationError(
-      property && `Property "${property}" violates unique flag.`
-    );
+    const message = property
+      ? `Property "${property}" violates unique flag.`
+      : 'Entity property violates unique flag.';
+
+    return new UniqueFlagViolationError(message);
   },
 };
