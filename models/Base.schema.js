@@ -1,5 +1,5 @@
-const { Schema } = require('mongoose');
+const { Schema } = require("mongoose");
 
 module.exports = function extendBaseSchema(schemaObject) {
-  return new Schema(schemaObject, { timestamps: true });
+    return new Schema(schemaObject, { timestamps: true });
 };

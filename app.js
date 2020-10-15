@@ -1,8 +1,8 @@
-const app = require('express')();
-const loadSettings = require('./config/app');
-const loadMiddlewares = require('./middlewares');
-const loadRoutes = require('./routes');
-const errorHandler = require('./middlewares/errorHandler');
+const app = require("express")();
+const loadSettings = require("./config/app");
+const loadMiddlewares = require("./middlewares");
+const loadRoutes = require("./routes");
+const errorHandler = require("./middlewares/errorHandler");
 
 loadSettings(app);
 loadMiddlewares(app);

@@ -1,9 +1,11 @@
-const { BEHIND_PROXY } = require('.');
+const { NODE_ENV } = require(".");
+const { PRODUCTION } = require("./constants");
 
 module.exports = function loadSettings(app) {
-  app.set('trust proxy', (ip) => {
-    console.log(`Behind proxy '${ip}.'`);
-    if (BEHIND_PROXY) return true;
-    return false;
-  });
+    app.set("trust proxy", (ip) => {
+        console.log(`Behind proxy on IP-address '${ip}.'`);
+
+        if (NODE_ENV === PRODUCTION) return true;
+        return false;
+    });
 };

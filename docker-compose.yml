@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   mongo:
-    container_name: globetrotter-db
+    container_name: mongodb
     build: ./.docker/mongo
     ports:
       - "27017:27017"
@@ -10,7 +10,7 @@ services:
     volumes:
       - data-volume:/var/lib/db
   app:
-    container_name: globetrotter-http
+    container_name: http
     restart: always
     image: holsen/globetrotter-server:1.0.0
     build:
@@ -24,13 +24,13 @@ services:
     links:
       - redis
       - mongo
-    networks: 
+    networks:
       - webnet
-    environment: 
+    environment:
       MONGO_HOST: mongo
       REDIS_HOST: redis
   redis:
-    container_name: globetrotter-cache
+    container_name: cache
     build: ./.docker/redis
     privileged: true
     ports:
@@ -40,7 +40,7 @@ services:
     volumes:
       - data-volume:/data
     hostname: redis
-networks: 
+networks:
   webnet:
 volumes:
   data-volume:
