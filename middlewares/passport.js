@@ -10,25 +10,30 @@ const { DatabaseErrors, SecurityErrors } = require("../errors");
 passport.use("google",
     new GoogleStrategy(
         {
-            callbackURL: `${config.BASE_URI}/security/${GOOGLE}/redirect`,
+            callbackURL: `${config.BASE_URI}/api/security/${GOOGLE}/redirect`,
             clientID: config.GOOGLE_CLIENT_ID,
             clientSecret: config.GOOGLE_CLIENT_SECRET,
         },
         async (_accessToken, _refreshToken, profile, done) => {
-            console.log("config/passport.js:18", profile);
+            console.log("google profile:", profile);
             try {
                 let user = await User.findOne({ "security.id": profile.id });
                 if (user) return done(null, user);
 
-                user = User.create({
-                    username: profile.displayName,
+                user = new User({
+                    details: {
+                        display_name: profile.displayName
+                    },
                     security: {
                         provider: GOOGLE,
                         id: profile.id,
-                        email: profile.email,
+                        email: profile._json.email,
                     },
-                    profile_pic: profile.photos[0].value,
+                    profile_pic: profile.photos[0].value || null,
                 });
+
+                await user.save();
+                console.log("user saved:", user);
 
                 return done(null, user);
             } catch (error) {
@@ -41,7 +46,7 @@ passport.use("google",
 passport.use("facebook",
     new FacebookStrategy(
         {
-            callbackURL: `${config.BASE_URI}/security/${FACEBOOK}/redirect`,
+            callbackURL: `${config.BASE_URI}/api/security/${FACEBOOK}/redirect`,
             clientID: config.FACEBOOK_CLIENT_ID,
             clientSecret: config.FACEBOOK_CLIENT_SECRET,
         },

@@ -5,7 +5,7 @@ const { NODE_ENV, BEHIND_PROXY } = process.env;
 
 const PORT = process.env.APP_PORT;
 const HOST = process.env.APP_HOST;
-const BASE_URI = `http://${HOST}:${PORT}/`;
+const BASE_URI = `http://${HOST}:${PORT}`;
 const CLIENT_URI = "http://localhost:3000";
 
 const TOKEN_SHORT_LIVED = 1000 * 60 * 15;

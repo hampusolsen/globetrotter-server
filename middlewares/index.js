@@ -10,10 +10,7 @@ module.exports = function loadMiddlewares(app) {
     app.use(logger());
 
     app.use(
-        cors({
-            origin: CLIENT_URI,
-            credentials: true,
-        })
+        cors()
     );
 
     app.use(json());

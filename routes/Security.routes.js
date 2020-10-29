@@ -1,5 +1,5 @@
 const Router = require("express").Router();
-const { GOOGLE, FACEBOOK, LOCAL, REGISTER_LOCALLY, AUTHENTICATE_LOCALLY } = require("../config/constants");
+const { GOOGLE, FACEBOOK, REGISTER_LOCALLY, AUTHENTICATE_LOCALLY } = require("../config/constants");
 const passport = require("../middlewares/passport");
 
 const redirectRoutes = {
@@ -13,17 +13,28 @@ Router.get(
     passport.authenticate(GOOGLE, { scope: ["profile", "email"] })
 );
 
-Router.get("/google/redirect", passport.authenticate(GOOGLE, redirectRoutes));
+Router.get(
+    "/google/redirect",
+    passport.authenticate(GOOGLE, { failureRedirect: "http://localhost:3000/welcome" }),
+    (req, res, next) => {
+        console.log("yey!", req.user);
+        res.redirect("http://localhost:3000/");
+    }
+);
 
 // Facebook
 Router.get(
     "/facebook",
-    passport.authenticate(FACEBOOK, { scope: ["profile"] })
+    passport.authenticate(FACEBOOK, { scope: ["profile", "email"] })
 );
 
 Router.get(
     "/facebook/redirect",
-    passport.authenticate(FACEBOOK, redirectRoutes)
+    passport.authenticate(FACEBOOK),
+    (req, res, next) => {
+        console.log("yey!", req.user);
+        res.redirect("http://localhost:3000/");
+    }
 );
 
 // Local
@@ -42,15 +53,19 @@ Router.post(
 );
 
 // General
-Router.delete("/logout", (req, res, next) => {
-    req.logout();
-    res.redirect("/welcome");
-});
+Router.delete(
+    "/logout",
+    (req, res, next) => {
+        req.logout();
+        res.redirect("/welcome");
+    }
+);
 
-Router.get("/second-step", (req, res, next) => {
-    console.log(req.user);
-    console.log(req.session);
-    res.send(req.user);
-});
+Router.get(
+    "/second-step",
+    (req, res, next) => {
+        res.send(req.user);
+    }
+);
 
 module.exports = Router;
