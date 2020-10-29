@@ -3,11 +3,11 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const LocalStrategy = require("passport-local").Strategy;
 const config = require("../config");
-const { EntityNotFoundError } = require("../errors");
 const User = require("../models/User.model");
 const { GOOGLE, FACEBOOK } = require("../config/constants");
+const { DatabaseErrors, SecurityErrors } = require("../errors");
 
-passport.use(
+passport.use("google",
     new GoogleStrategy(
         {
             callbackURL: `${config.BASE_URI}/security/${GOOGLE}/redirect`,
@@ -38,7 +38,7 @@ passport.use(
     )
 );
 
-passport.use(
+passport.use("facebook",
     new FacebookStrategy(
         {
             callbackURL: `${config.BASE_URI}/security/${FACEBOOK}/redirect`,
@@ -46,14 +46,47 @@ passport.use(
             clientSecret: config.FACEBOOK_CLIENT_SECRET,
         },
         async (accessToken, refreshToken, profile, done) => {
-            // @todo callback
+            // @TODO callback
         }
     )
 );
 
-passport.use(
-    new LocalStrategy({ usernameField: "email" }, async (email, password) => {
-        // @todo callback
+passport.use("local.authenticate",
+    new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
+        try {
+            const user = await User.findOne({"security.email": email});
+            if (!user) throw SecurityErrors.AuthenticationError();
+
+            return done(null, user);
+        } catch (error) {
+            return done(error);
+        }
+    })
+);
+
+passport.use("local.register",
+    new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
+        try {
+            const emailIsTaken = await User.findOne({ "security.email": email });
+            if (emailIsTaken) throw DatabaseErrors.UniqueFlagViolationError();
+
+            const newUser = new User({
+                details: {
+                    display_name: email,
+                },
+                security: {
+                    provider: "local",
+                    email,
+                    password
+                }
+            });
+
+            await newUser.save();
+
+            return done(null, newUser);
+        } catch (error) {
+            return done(error);
+        }
     })
 );
 
@@ -61,7 +94,7 @@ passport.serializeUser((user, done) => done(null, user._id));
 
 passport.deserializeUser(async (userId, done) => {
     const user = await User.findById(userId);
-    if (!user) return done(EntityNotFoundError(), null);
+    if (!user) return done(DatabaseErrors.EntityNotFoundError(), null);
 
     return done(null, user);
 });

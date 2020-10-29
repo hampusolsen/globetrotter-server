@@ -13,6 +13,7 @@ module.exports = function session() {
             secure: config.BEHIND_PROXY,
             httpOnly: true,
             maxAge: config.TOKEN_SHORT_LIVED,
+            sameSite: "lax",
         },
     });
 };

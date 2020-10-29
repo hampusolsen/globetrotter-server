@@ -2,28 +2,22 @@ const { SchemaTypes, model } = require("mongoose");
 const bcrypt = require("bcrypt");
 const extendBaseSchema = require("./Base.schema");
 const { AUTH_PROVIDERS } = require("../config");
-const {
-    EncryptionError,
-    InvalidProviderError,
-    EntityValidationError,
-} = require("../errors");
 const { LOCAL } = require("../config/constants");
 const { BCRYPT_SALT_ROUNDS } = require("../config/security");
+const { DatabaseErrors, SecurityErrors } = require("../errors");
 
 const UserSchema = extendBaseSchema({
-    username: {
-        type: String,
-        required: true,
-        index: true,
+    details: {
+        display_name: { type: String, required: true },
+        profile_pic: String,
+        description: String,
     },
     security: {
-        id: { type: String, index: true, required: true },
+        id: { type: String, index: true },
         provider: { type: String, required: true },
-        email: { type: String, required: true },
+        email: { type: String, required: true, index: true },
         password: String,
     },
-    profile_pic: String,
-    description: String,
     travels: [SchemaTypes.ObjectId],
     followers: [SchemaTypes.ObjectId],
     following: [SchemaTypes.ObjectId],
@@ -34,38 +28,37 @@ UserSchema.pre("validate", function validateSecurityProperties(next) {
 
     switch (provider) {
     case LOCAL:
-        if (!email || !password) return next(EntityValidationError());
+        if (!email || !password) return next(DatabaseErrors.EntityValidationError());
+        break;
 
-        // fall through
     case !LOCAL:
-        if (!id) return next(EntityValidationError());
-
-        // fall through
-    default:
-        if (!AUTH_PROVIDERS.includes(provider)) {
-            return next(InvalidProviderError(provider));
-        }
-
-        return next();
+        if (!id) return next(DatabaseErrors.EntityValidationError());
+        break;
     }
+
+    if (!AUTH_PROVIDERS.includes(provider)) {
+        return next(SecurityErrors.InvalidProviderError(provider));
+    }
+
+    return next();
 });
 
 UserSchema.pre("save", async function hashPassword(next) {
-    if (this.password) {
+    if (this.security.password) {
         try {
-            this.password = await bcrypt.hash(
-                this.password,
+            this.security.password = await bcrypt.hash(
+                this.security.password,
                 BCRYPT_SALT_ROUNDS
             );
         } catch (error) {
-            return next(EncryptionError(error.message));
+            return next(SecurityErrors.EncryptionError(error.message));
         }
     }
     return next();
 });
 
 UserSchema.methods.authenticate = async function validatePassword(password) {
-    const authenticated = await bcrypt.compare(password, this.password);
+    const authenticated = await bcrypt.compare(password, this.security.password);
     return authenticated;
 };
 

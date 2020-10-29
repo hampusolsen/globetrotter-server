@@ -1,10 +1,10 @@
 const Router = require("express").Router();
-const { GOOGLE, FACEBOOK } = require("../config/constants");
+const { GOOGLE, FACEBOOK, LOCAL, REGISTER_LOCALLY, AUTHENTICATE_LOCALLY } = require("../config/constants");
 const passport = require("../middlewares/passport");
 
 const redirectRoutes = {
-    failureRedirect: "/",
-    successRedirect: "/main",
+    failureRedirect: "/api/security/failure",
+    successRedirect: "/api/security/second-step",
 };
 
 // Google
@@ -27,11 +27,30 @@ Router.get(
 );
 
 // Local
+Router.post(
+    "/local/authenticate",
+    passport.authenticate(AUTHENTICATE_LOCALLY, redirectRoutes),
+    (req, res, next) => {
+        console.log(req.session);
+        res.send("oK");
+    }
+);
+
+Router.post(
+    "/local/register",
+    passport.authenticate(REGISTER_LOCALLY, redirectRoutes)
+);
 
 // General
 Router.delete("/logout", (req, res, next) => {
     req.logout();
-    res.redirect("/");
+    res.redirect("/welcome");
+});
+
+Router.get("/second-step", (req, res, next) => {
+    console.log(req.user);
+    console.log(req.session);
+    res.send(req.user);
 });
 
 module.exports = Router;
