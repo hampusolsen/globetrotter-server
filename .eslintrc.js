@@ -30,7 +30,7 @@ module.exports = {
             {
                 vars: "local",
                 args: "after-used",
-                argsIgnorePattern: "^_|^next$"
+                argsIgnorePattern: "^_|^next$|^req$|^res$"
             }
         ],
     }

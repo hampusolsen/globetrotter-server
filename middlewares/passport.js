@@ -15,12 +15,11 @@ passport.use("google",
             clientSecret: config.GOOGLE_CLIENT_SECRET,
         },
         async (_accessToken, _refreshToken, profile, done) => {
-            console.log("google profile:", profile);
             try {
-                let user = await User.findOne({ "security.id": profile.id });
-                if (user) return done(null, user);
+                const existingUser = await User.findOne({ "security.id": profile.id });
+                if (existingUser) return done(null, existingUser);
 
-                user = new User({
+                const newUserModel = new User({
                     details: {
                         display_name: profile.displayName
                     },
@@ -32,10 +31,9 @@ passport.use("google",
                     profile_pic: profile.photos[0].value || null,
                 });
 
-                await user.save();
-                console.log("user saved:", user);
+                const newUser = await newUserModel.save();
 
-                return done(null, user);
+                return done(null, newUser);
             } catch (error) {
                 return done(error, null);
             }
@@ -51,7 +49,28 @@ passport.use("facebook",
             clientSecret: config.FACEBOOK_CLIENT_SECRET,
         },
         async (accessToken, refreshToken, profile, done) => {
-            // @TODO callback
+            try {
+                const existingUser = await User.findOne({ "security.id": profile.id });
+                if (existingUser) return done(null, existingUser);
+
+                const newUserModel = new User({
+                    details: {
+                        display_name: profile.displayName
+                    },
+                    security: {
+                        provider: GOOGLE,
+                        id: profile.id,
+                        email: profile._json.email,
+                    },
+                    profile_pic: profile.photos[0].value || null,
+                });
+
+                const newUser = await newUserModel.save();
+
+                return done(null, newUser);
+            } catch (error) {
+                return done(error, null);
+            }
         }
     )
 );
@@ -60,9 +79,12 @@ passport.use("local.authenticate",
     new LocalStrategy({ usernameField: "email" }, async (email, password, done) => {
         try {
             const user = await User.findOne({"security.email": email});
-            if (!user) throw SecurityErrors.AuthenticationError();
+            if (!user) throw DatabaseErrors.EntityNotFoundError();
 
-            return done(null, user);
+            const passwordIsCorrect = await user.authenticate(password);
+            if (passwordIsCorrect) return done(null, user);
+
+            throw SecurityErrors.AuthenticationError();
         } catch (error) {
             return done(error);
         }
@@ -86,9 +108,9 @@ passport.use("local.register",
                 }
             });
 
-            await newUser.save();
+            const user = await newUser.save();
 
-            return done(null, newUser);
+            return done(null, user);
         } catch (error) {
             return done(error);
         }

@@ -8,14 +8,17 @@ const passport = require("./passport");
 
 module.exports = function loadMiddlewares(app) {
     app.use(logger());
+    app.use(cookieParser());
 
     app.use(
-        cors()
+        cors({
+            origin: CLIENT_URI,
+            credentials: true,
+        })
     );
 
     app.use(json());
     app.use(urlencoded({ extended: true }));
-    app.use(cookieParser());
     app.use(session());
     app.use(passport.initialize());
     app.use(passport.session());
