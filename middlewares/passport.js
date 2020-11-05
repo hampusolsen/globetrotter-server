@@ -120,6 +120,7 @@ passport.use("local.register",
 passport.serializeUser((user, done) => done(null, user._id));
 
 passport.deserializeUser(async (userId, done) => {
+    console.log(`--- Deserializing user with id ${userId} ---`);
     const user = await User.findById(userId);
     if (!user) return done(DatabaseErrors.EntityNotFoundError(), null);
 

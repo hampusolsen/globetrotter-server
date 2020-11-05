@@ -5,15 +5,17 @@ const passport = require("../middlewares/passport");
 const { validateUserCredentials } = require("../validations/Security.validation");
 
 const redirectOptions = {
-    failureRedirect: `${CLIENT_URI}/welcome`,
-    successRedirect: `${CLIENT_URI}/`
+    failureRedirect: `${CLIENT_URI}/`,
+    successRedirect: `${CLIENT_URI}/my`
 };
 
 const scopeOptions = {
     scope: ["profile", "email"]
 };
 
-function sendConfirmation(req, res, next) {
+function sendConfirmation(req, res, _next) {
+    console.log(req.session);
+    console.log(req.user);
     res.sendStatus(204);
 }
 

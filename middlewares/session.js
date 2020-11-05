@@ -10,11 +10,10 @@ module.exports = function session() {
             ttl: parseInt(config.TOKEN_SHORT_LIVED) / 1000,
         }),
         secret: config.SESSION_TOKEN_SECRET,
-        saveUninitialized: true,
-        resave: false,
+        saveUninitialized: false,
+        resave: true,
         name: "qid",
         cookie: {
-            secure: config.BEHIND_PROXY,
             httpOnly: true,
             maxAge: parseInt(config.TOKEN_SHORT_LIVED),
             sameSite: "lax",

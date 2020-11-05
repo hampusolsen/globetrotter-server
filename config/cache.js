@@ -1,7 +1,7 @@
 const Redis = require("ioredis");
 
 const { REDIS_PORT, REDIS_HOST } = process.env;
-const { CachingError } = require("../errors");
+const { DatabaseErrors } = require("../errors");
 
 const client = new Redis({
     host: REDIS_HOST,
@@ -13,7 +13,7 @@ client.on("ready", () => {
 });
 
 client.on("error", (error) => {
-    console.error(CachingError(error.message));
+    console.error(DatabaseErrors.CachingError(error.message));
 });
 
 module.exports = client;
