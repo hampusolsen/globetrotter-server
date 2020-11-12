@@ -7,6 +7,13 @@ class CachingError extends BaseError {
     }
 }
 
+class CloudinaryUploadError extends BaseError {
+    constructor(message = "Error writing stream.", code = 500) {
+        super(message, code);
+        this.name = this.constructor.name;
+    }
+}
+
 class ConnectionError extends BaseError {
     constructor(message = "Unable to connect with the database.", code = 503) {
         super(message, code);
@@ -38,6 +45,9 @@ class UniqueFlagViolationError extends BaseError {
 module.exports = {
     CachingError(message) {
         return new CachingError(message);
+    },
+    CloudinaryUploadError(message) {
+        return new CloudinaryUploadError(message);
     },
     ConnectionError() {
         return new ConnectionError();
