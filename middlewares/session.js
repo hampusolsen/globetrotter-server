@@ -15,7 +15,7 @@ module.exports = function session() {
         name: "qid",
         cookie: {
             httpOnly: true,
-            maxAge: parseInt(config.TOKEN_SHORT_LIVED),
+            maxAge: parseInt(config.TOKEN_LONG_LIVED),
             sameSite: "lax",
         },
     });

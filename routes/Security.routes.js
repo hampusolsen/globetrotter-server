@@ -28,7 +28,6 @@ Router.get(
 Router.get(
     "/google/redirect",
     passport.authenticate(GOOGLE, redirectOptions),
-
 );
 
 // Facebook
@@ -60,7 +59,7 @@ Router.post(
 // General
 Router.delete(
     "/logout",
-    (req, res, next) => {
+    (req, res) => {
         req.logout();
         res.sendStatus(204);
     }

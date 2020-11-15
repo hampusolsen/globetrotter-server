@@ -1,15 +1,15 @@
-const { Duplex } = require("stream");
+const { Readable } = require("stream");
 const cloudinary = require("../config/cloudinary");
 
-class CloudinaryAPI {
+module.exports = {
     streamImageBuffer(buffer, folder) {
         return new Promise((resolve, reject) => {
-            const readStream = new Duplex();
+            const readStream = new Readable();
 
             readStream.push(buffer);
             readStream.push(null);
 
-            const uploadStream = cloudinary.uploader.upload_stream({
+            const writeStream = cloudinary.uploader.upload_stream({
                 folder,
                 discard_original_filename: false,
                 overwrite: true,
@@ -18,13 +18,8 @@ class CloudinaryAPI {
                 return resolve(result);
             });
 
-            readStream.pipe(uploadStream);
+            readStream.pipe(writeStream);
 
         });
     }
-
-}
-
-const Cloudinary = new CloudinaryAPI();
-
-module.exports = Cloudinary;
+};

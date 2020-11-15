@@ -1,11 +1,10 @@
 const multer = require("multer");
 
-class MulterAPI {
+module.exports = {
     single(key) {
         return multer().single(key);
+    },
+    any() {
+        return multer().any();
     }
-}
-
-const Multer = new MulterAPI();
-
-module.exports = Multer;
+};

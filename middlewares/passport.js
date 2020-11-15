@@ -7,6 +7,30 @@ const User = require("../models/User.model");
 const { GOOGLE, FACEBOOK } = require("../config/constants");
 const { DatabaseErrors, SecurityErrors } = require("../errors");
 
+function createPassportController(provider) {
+    return async function(_accessToken, _refreshToken, profile, done) {
+        try {
+            const existingUser = await User.findOne({ "security.id": profile.id });
+            if (existingUser) return done(null, existingUser);
+
+            const newUser = await User.create({
+                details: {
+                    display_name: profile.displayName,
+                },
+                security: {
+                    provider,
+                    id: profile.id,
+                    email: profile._json.email,
+                },
+            });
+
+            return done(null, newUser);
+        } catch (error) {
+            return done(error, null);
+        }
+    };
+}
+
 passport.use("google",
     new GoogleStrategy(
         {
@@ -14,30 +38,7 @@ passport.use("google",
             clientID: config.GOOGLE_CLIENT_ID,
             clientSecret: config.GOOGLE_CLIENT_SECRET,
         },
-        async (_accessToken, _refreshToken, profile, done) => {
-            try {
-                const existingUser = await User.findOne({ "security.id": profile.id });
-                if (existingUser) return done(null, existingUser);
-
-                const newUserModel = new User({
-                    details: {
-                        display_name: profile.displayName
-                    },
-                    security: {
-                        provider: GOOGLE,
-                        id: profile.id,
-                        email: profile._json.email,
-                    },
-                    profile_pic: profile.photos[0].value || null,
-                });
-
-                const newUser = await newUserModel.save();
-
-                return done(null, newUser);
-            } catch (error) {
-                return done(error, null);
-            }
-        }
+        createPassportController(GOOGLE)
     )
 );
 
@@ -48,30 +49,7 @@ passport.use("facebook",
             clientID: config.FACEBOOK_CLIENT_ID,
             clientSecret: config.FACEBOOK_CLIENT_SECRET,
         },
-        async (accessToken, refreshToken, profile, done) => {
-            try {
-                const existingUser = await User.findOne({ "security.id": profile.id });
-                if (existingUser) return done(null, existingUser);
-
-                const newUserModel = new User({
-                    details: {
-                        display_name: profile.displayName
-                    },
-                    security: {
-                        provider: GOOGLE,
-                        id: profile.id,
-                        email: profile._json.email,
-                    },
-                    profile_pic: profile.photos[0].value || null,
-                });
-
-                const newUser = await newUserModel.save();
-
-                return done(null, newUser);
-            } catch (error) {
-                return done(error, null);
-            }
-        }
+        createPassportController(FACEBOOK)
     )
 );
 
@@ -99,7 +77,7 @@ passport.use("local.register",
 
             const newUser = new User({
                 details: {
-                    display_name: email,
+                    display_name: email.split("@")[0],
                 },
                 security: {
                     provider: "local",
@@ -120,7 +98,6 @@ passport.use("local.register",
 passport.serializeUser((user, done) => done(null, user._id));
 
 passport.deserializeUser(async (userId, done) => {
-    console.log(`--- Deserializing user with id ${userId} ---`);
     const user = await User.findById(userId);
     if (!user) return done(DatabaseErrors.EntityNotFoundError(), null);
 
