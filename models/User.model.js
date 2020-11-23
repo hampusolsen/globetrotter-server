@@ -8,8 +8,8 @@ const { DatabaseErrors, SecurityErrors } = require("../errors");
 
 const UserSchema = extendBaseSchema({
     details: {
-        display_name: { type: String, required: true },
-        profile_pic: String,
+        displayName: { type: String, required: true },
+        profilePic: String,
         description: String,
     },
     security: {

@@ -6,5 +6,8 @@ module.exports = {
     },
     any() {
         return multer().any();
+    },
+    many(key, limit = 10) {
+        return multer().array(key, limit);
     }
 };

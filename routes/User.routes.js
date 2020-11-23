@@ -1,7 +1,7 @@
 const Router = require("express").Router();
 const { DatabaseErrors, SecurityErrors } = require("../errors");
 const Cloudinary = require("../libs/Cloudinary");
-const Multer = require("../middlewares/multer");
+const upload = require("../middlewares/upload");
 
 Router.get("/profile/:userId?", (req, res, next) => {
     if (!req.params.userId) {
@@ -16,7 +16,7 @@ Router.get("/profile/:userId?", (req, res, next) => {
     }
 });
 
-Router.put("/profile", Multer.single("profilePicture"), async (req, res, next) => {
+Router.put("/profile", upload.single("profilePicture"), async (req, res, next) => {
     let updatedDetails = {
         display_name: req.body.displayName,
         description: req.body.description,

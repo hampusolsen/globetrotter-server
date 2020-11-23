@@ -3,10 +3,10 @@ const { body } = require("express-validator");
 module.exports = {
     validateUserCredentials() {
         return [
-            body("email", "Email must exist.")
+            body("email", "Email required.")
                 .exists()
                 .isEmail(),
-            body("password", "Password must exist.")
+            body("password", "Password required.")
                 .exists()
                 .isLength({ min: 8 }),
         ];
