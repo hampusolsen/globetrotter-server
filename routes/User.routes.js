@@ -17,8 +17,8 @@ Router.get("/profile/:userId?", (req, res, next) => {
 });
 
 Router.put("/profile", upload.single("profilePicture"), async (req, res, next) => {
-    let updatedDetails = {
-        display_name: req.body.displayName,
+    const updatedDetails = {
+        displayName: req.body.displayName,
         description: req.body.description,
     };
 
@@ -27,13 +27,12 @@ Router.put("/profile", upload.single("profilePicture"), async (req, res, next) =
     if (req.file) {
         try {
             const response = await Cloudinary.streamImageBuffer(req.file.buffer, "test");
-            updatedDetails.profile_pic = response.url;
+            updatedDetails.profilePic = response.url;
         } catch (error) {
             return next(DatabaseErrors.CloudinaryUploadError(error.message));
         }
     }
 
-    // req.user.details.display_name = req.body.displayName;
     req.user.details = {
         ...req.user.details,
         ...updatedDetails,
