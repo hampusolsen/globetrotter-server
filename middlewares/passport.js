@@ -15,7 +15,7 @@ function createPassportController(provider) {
 
             const newUser = await User.create({
                 details: {
-                    display_name: profile.displayName,
+                    displayName: profile.displayName,
                 },
                 security: {
                     provider,
@@ -77,7 +77,7 @@ passport.use("local.register",
 
             const newUser = new User({
                 details: {
-                    display_name: email.split("@")[0],
+                    displayName: email.split("@")[0],
                 },
                 security: {
                     provider: "local",

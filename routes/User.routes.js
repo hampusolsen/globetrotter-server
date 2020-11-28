@@ -1,7 +1,7 @@
 const Router = require("express").Router();
 const { DatabaseErrors, SecurityErrors } = require("../errors");
 const Cloudinary = require("../libs/Cloudinary");
-const Multer = require("../middlewares/multer");
+const upload = require("../middlewares/upload");
 
 Router.get("/profile/:userId?", (req, res, next) => {
     if (!req.params.userId) {
@@ -16,9 +16,9 @@ Router.get("/profile/:userId?", (req, res, next) => {
     }
 });
 
-Router.put("/profile", Multer.single("profilePicture"), async (req, res, next) => {
-    let updatedDetails = {
-        display_name: req.body.displayName,
+Router.put("/profile", upload.single("profilePicture"), async (req, res, next) => {
+    const updatedDetails = {
+        displayName: req.body.displayName,
         description: req.body.description,
     };
 
@@ -27,13 +27,12 @@ Router.put("/profile", Multer.single("profilePicture"), async (req, res, next) =
     if (req.file) {
         try {
             const response = await Cloudinary.streamImageBuffer(req.file.buffer, "test");
-            updatedDetails.profile_pic = response.url;
+            updatedDetails.profilePic = response.url;
         } catch (error) {
             return next(DatabaseErrors.CloudinaryUploadError(error.message));
         }
     }
 
-    // req.user.details.display_name = req.body.displayName;
     req.user.details = {
         ...req.user.details,
         ...updatedDetails,

@@ -8,8 +8,8 @@ const { DatabaseErrors, SecurityErrors } = require("../errors");
 
 const UserSchema = extendBaseSchema({
     details: {
-        display_name: { type: String, required: true },
-        profile_pic: String,
+        displayName: { type: String, required: true },
+        profilePic: String,
         description: String,
     },
     security: {
@@ -44,6 +44,8 @@ UserSchema.pre("validate", function validateSecurityProperties(next) {
 });
 
 UserSchema.pre("save", async function hashPassword(next) {
+    if (!this.isModified("security.password")) return next();
+
     if (this.security.password) {
         try {
             this.security.password = await bcrypt.hash(
@@ -54,6 +56,7 @@ UserSchema.pre("save", async function hashPassword(next) {
             return next(SecurityErrors.EncryptionError(error.message));
         }
     }
+
     return next();
 });
 
