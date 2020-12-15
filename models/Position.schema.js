@@ -3,7 +3,8 @@ const { Schema } = require("mongoose");
 const PositionSchema = new Schema({
     type: {
         type: String,
-        enum: ["Position"],
+        enum: ["Point"],
+        default: "Point",
         required: true
     },
     coordinates: {

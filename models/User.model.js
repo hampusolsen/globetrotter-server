@@ -18,9 +18,9 @@ const UserSchema = extendBaseSchema({
         email: { type: String, required: true, index: true },
         password: String,
     },
-    travels: [SchemaTypes.ObjectId],
-    followers: [SchemaTypes.ObjectId],
-    following: [SchemaTypes.ObjectId],
+    travels: [{ type: SchemaTypes.ObjectId, ref: "Travel" }],
+    followers: [{ type: SchemaTypes.ObjectId, ref: "User" }],
+    following: [{ type: SchemaTypes.ObjectId, ref: "User" }],
 });
 
 UserSchema.pre("validate", function validateSecurityProperties(next) {

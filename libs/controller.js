@@ -14,7 +14,7 @@ module.exports = {
             }
         };
     },
-    catch(controller) {
+    withErrorBoundary(controller) {
         return async (req, res, next) => {
             try {
                 await controller(req, res);

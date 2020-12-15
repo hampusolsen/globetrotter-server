@@ -3,8 +3,9 @@ const { DatabaseErrors, SecurityErrors } = require("../errors");
 const Cloudinary = require("../libs/Cloudinary");
 const upload = require("../middlewares/upload");
 
-Router.get("/profile/:userId?", (req, res, next) => {
+Router.get("/profile/:userId?", async (req, res, next) => {
     if (!req.params.userId) {
+
         if (req.user) return res.status(200).send({
             ...req.user.details,
             travels: req.user.travels,
@@ -21,8 +22,6 @@ Router.put("/profile", upload.single("profilePicture"), async (req, res, next) =
         displayName: req.body.displayName,
         description: req.body.description,
     };
-
-    console.log(req.file);
 
     if (req.file) {
         try {

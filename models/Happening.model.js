@@ -3,10 +3,10 @@ const PositionSchema = require("./Position.schema");
 const extendBaseSchema = require("./Base.schema");
 
 const HappeningSchema = extendBaseSchema({
-    travel: { type: SchemaTypes.ObjectId, required: true },
+    travelId: { type: SchemaTypes.ObjectId, required: true, ref: "Travel" },
     title: { type: String, min: 3, max: 40, required: true },
     description: { type: String, max: 200 },
-    images: [String],
+    images: { type: [String], default: [] },
     date: { type: Date, required: true },
     toDate: Date,
     position: {
@@ -15,4 +15,4 @@ const HappeningSchema = extendBaseSchema({
     }
 });
 
-module.exports = model("happening", HappeningSchema);
+module.exports = model("Happening", HappeningSchema);

@@ -5,7 +5,7 @@ module.exports = function errorHandlerFactory(log = true) {
 
         if (error.errors) {
             res.status(error.code).send({
-                errors: error.errors,
+                errors: error.errors.errors,
                 type: error.name,
                 message: error.message,
                 status: error.status,
